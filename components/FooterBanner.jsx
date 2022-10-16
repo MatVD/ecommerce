@@ -26,6 +26,7 @@ const FooterBanner = ({
           <h3>{largeText2}</h3>
           <p>{saleTime}</p>
         </div>
+          <img src={urlFor(image)} className="footer-banner-image" alt="Headphones" />
         <div className="right">
           <p>{smallText}</p>
           <h3>{midText}</h3>
@@ -33,6 +34,7 @@ const FooterBanner = ({
           <Link href={`/product/${product}`}>
             <button type="button">{buttonText}</button>
           </Link>
+
         </div>
       </div>
     </div>
