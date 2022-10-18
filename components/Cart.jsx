@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import Link from "next/Link";
+import Link from "next/link";
 import {
   AiOutlineShopping,
   AiOutlineMinus,
@@ -10,11 +10,38 @@ import { TiDeleteOutline } from "react-icons/ti";
 import toast from "react-hot-toast";
 import { useStateContext } from "../context/StateContext";
 import { urlFor } from "../Lib/client";
+import getStripe from "../lib/getStripe";
 
 function Cart() {
   const cartRef = useRef();
-  const { totalPrice, totalQuantities, cartItems, setShowCart, toggleCartItemQuantity } =
-    useStateContext();
+  const {
+    totalPrice,
+    totalQuantities,
+    cartItems,
+    setShowCart,
+    toggleCartItemQuantity,
+    onRemove,
+  } = useStateContext();
+
+  const handleCheckOut = async () => {
+    const stripe = await getStripe();
+
+    const response = await fetch("/api/stripe", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(cartItems),
+    });
+
+    if (response.statusCode === 500) return;
+
+    const data = await response.json();
+
+    toast.loading("redirecting...");
+
+    stripe.redirectToCheckout({ sessionId: data.id });
+  };
 
   return (
     <div className="cart-wrapper" ref={cartRef}>
@@ -48,7 +75,7 @@ function Cart() {
         <div className="product-container">
           {cartItems.length >= 1 &&
             cartItems.map((item, index) => (
-              <div className="product" key={item.id}>
+              <div className="product" key={index}>
                 <img
                   src={urlFor(item?.image[0])}
                   className="cart-product-image"
@@ -61,40 +88,55 @@ function Cart() {
                   <div className="flex bottom">
                     <div>
                       <p className="quantity-desc">
-                        <span className="minus" onClick={() => toggleCartItemQuantity(item._id, 'dec')}>
+                        <span
+                          className="minus"
+                          onClick={() =>
+                            toggleCartItemQuantity(item._id, "dec")
+                          }
+                        >
                           <AiOutlineMinus />
                         </span>
                         <span className="num">{item.quantity}</span>
-                        <span className="plus" onClick={() => toggleCartItemQuantity(item._id, 'inc')}>
+                        <span
+                          className="plus"
+                          onClick={() =>
+                            toggleCartItemQuantity(item._id, "inc")
+                          }
+                        >
                           <AiOutlinePlus />
                         </span>
                       </p>
                     </div>
-                    <button 
-                    type="button" 
-                    className="remove-item"
-                    onClick="">
+                    <button
+                      type="button"
+                      className="remove-item"
+                      onClick={() => onRemove(item)}
+                    >
                       <TiDeleteOutline />
                     </button>
                   </div>
                 </div>
               </div>
             ))}
-            <div>
-              {cartItems.length >= 1 && (
-                <div className="cart-bottom">
-                  <div className="total">
-                    <h3>Subtotal: </h3>
-                    <h3>{totalPrice}€</h3>
-                  </div>
-                  <div className="btn-container">
-                    <button type="button" className="btn" onClick="">
-                      Payment
-                    </button>
-                  </div>
+          <div>
+            {cartItems.length >= 0 && (
+              <div className="cart-bottom">
+                <div className="total">
+                  <h3>Subtotal: </h3>
+                  <h3>{totalPrice}€</h3>
                 </div>
-              )}
-            </div>
+                <div className="btn-container">
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={handleCheckOut}
+                  >
+                    Payment
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

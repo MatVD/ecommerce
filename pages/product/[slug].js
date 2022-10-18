@@ -12,7 +12,13 @@ import { useStateContext } from "../../context/StateContext";
 const ProductDetails = ({ product, products }) => {
   const { image, name, details, price } = product;
   const [index, setIndex] = useState(0);
-  const { decQty, incQty, qty, onAdd } = useStateContext();
+  const { decQty, incQty, qty, onAdd, setShowCart } = useStateContext();
+
+  const handleBuyNow = () => {
+    onAdd(product, qty);
+
+    setShowCart(true)
+  }
 
   return (
     <div>
@@ -26,13 +32,15 @@ const ProductDetails = ({ product, products }) => {
           </div>
           <div className="small-images-container">
             {image?.map((item, i) => (
-              <img
-                src={urlFor(item)}
-                className={
-                  i === index ? "small-image selected-image" : "small-image"
-                }
-                onMouseEnter={() => setIndex(i)}
-              />
+              <div key={i}>
+                <img
+                  src={urlFor(item)}
+                  className={
+                    i === index ? "small-image selected-image" : "small-image"
+                  }
+                  onMouseEnter={() => setIndex(i)}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -56,7 +64,9 @@ const ProductDetails = ({ product, products }) => {
               <span className="minus" onClick={decQty}>
                 <AiOutlineMinus />
               </span>
-              <span className="num" onClick="">{qty}</span>
+              <span className="num">
+                {qty}
+              </span>
               <span className="plus" onClick={incQty}>
                 <AiOutlinePlus />
               </span>
@@ -70,7 +80,7 @@ const ProductDetails = ({ product, products }) => {
             >
               Add to cart
             </button>
-            <button type="button" className="buy-now" onClick="">
+            <button type="button" className="buy-now" onClick={handleBuyNow}>
               Buy now
             </button>
           </div>
@@ -80,8 +90,8 @@ const ProductDetails = ({ product, products }) => {
         <h2>You may also like</h2>
         <div className="marquee">
           <div className="maylike-products-container track">
-            {products.map((item) => (
-              <Product key={item.id} product={item} />
+            {products.map((item, index) => (
+              <Product key={index} product={item} />
             ))}
           </div>
         </div>

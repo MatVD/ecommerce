@@ -1,11 +1,10 @@
 import React from "react";
 import Link from "next/link";
 
-import { urlFor } from "../LIB/client";
+import { urlFor } from "../Lib/client";
 
-const Product = ({ product: { image, name, slug, price }}) => {
+const Product = ({ product: { image, name, slug, price } }) => {
   return (
-    <div>
       <Link href={`/product/${slug.current}`}>
         <div className="product-card">
           <img
@@ -18,7 +17,6 @@ const Product = ({ product: { image, name, slug, price }}) => {
           <p className="product-price">{price}€</p>
         </div>
       </Link>
-    </div>
   );
 };
 
