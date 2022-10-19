@@ -760,13 +760,15 @@ span.text-red {
 
   .hero-banner-container {
     height: 500px;
+    padding: 100px 20px;
+    padding-right: 10px;
   }
 
   .hero-banner-image {
     position: absolute;
-    top: 19%;
-    width: 220px;
-    height: 220px;
+    top: 15%;
+    width: 280px;
+    height: 280px;
   }
 
   .footer-banner-container {
